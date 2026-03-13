@@ -3,8 +3,8 @@ Training loop for CNN vs ViT CIFAR-10 experiments.
 
 Usage
 -----
-    python src/train.py --model resnet --aug baseline --epochs 50
-    python src/train.py --model vit --aug aggressive --data-fraction 0.25 --epochs 50
+    python src/train.py --model resnet --aug baseline --epochs 200
+    python src/train.py --model vit --aug aggressive --data-fraction 0.25 --epochs 200
 """
 
 import argparse
@@ -29,8 +29,10 @@ def parse_args():
     parser.add_argument("--aug", type=str, required=True,
                         choices=["baseline", "standard", "aggressive"],
                         help="Augmentation regimen")
-    parser.add_argument("--epochs", type=int, default=50,
+    parser.add_argument("--epochs", type=int, default=200,
                         help="Number of training epochs")
+    parser.add_argument("--warmup-epochs", type=int, default=20,
+                        help="Linear warmup epochs before cosine decay")
     parser.add_argument("--batch-size", type=int, default=128,
                         help="Mini-batch size")
     parser.add_argument("--lr", type=float, default=1e-3,
@@ -46,7 +48,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def train_one_epoch(model, loader, criterion, optimiser, device, mixup_fn=None):
+def train_one_epoch(model, loader, criterion, optimiser, device, mixup_fn=None,
+                    max_grad_norm=1.0):
     """Run one training epoch; return average loss."""
     model.train()
     running_loss = 0.0
@@ -64,6 +67,7 @@ def train_one_epoch(model, loader, criterion, optimiser, device, mixup_fn=None):
 
         optimiser.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=max_grad_norm)
         optimiser.step()
 
         running_loss += loss.item()
@@ -140,10 +144,22 @@ def main():
         )
         criterion = SoftTargetCrossEntropy()
     else:
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
 
     optimiser = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=5e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimiser, T_max=args.epochs)
+
+    # Linear warmup + cosine decay
+    warmup_scheduler = torch.optim.lr_scheduler.LinearLR(
+        optimiser, start_factor=1e-3, total_iters=args.warmup_epochs
+    )
+    cosine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimiser, T_max=args.epochs - args.warmup_epochs
+    )
+    scheduler = torch.optim.lr_scheduler.SequentialLR(
+        optimiser,
+        schedulers=[warmup_scheduler, cosine_scheduler],
+        milestones=[args.warmup_epochs],
+    )
 
     # ---- Logging setup ----
     name = run_name(args.model, args.aug, args.data_fraction)

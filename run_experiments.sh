@@ -6,7 +6,7 @@
 # ==============================================================
 set -e
 
-EPOCHS=${1:-50}           # pass epoch count as first arg, default 50
+EPOCHS=${1:-200}          # pass epoch count as first arg, default 200
 SRC_DIR="$(dirname "$0")/src"
 
 echo "============================================================"
