@@ -89,3 +89,5 @@ echo "  Logs:    logs/"
 echo "  Weights: weights/"
 echo "  Plots:   plots/"
 echo "============================================================"
+
+sudo shutdown -h now
