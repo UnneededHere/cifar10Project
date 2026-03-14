@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================
-#  Run all CNN vs ViT CIFAR-10 experiments
+#  Run all CNN vs ViT EuroSAT experiments
 #  Phase 1: Data-efficiency sweep  (8 runs)
 #  Phase 2: Augmentation comparison (6 runs)
 # ==============================================================
@@ -10,7 +10,7 @@ EPOCHS=${1:-200}          # pass epoch count as first arg, default 200
 SRC_DIR="$(dirname "$0")/src"
 
 echo "============================================================"
-echo "  CIFAR-10 CNN vs ViT Experiment Suite"
+echo "  EuroSAT CNN vs ViT Experiment Suite"
 echo "  Epochs per run: ${EPOCHS}"
 echo "============================================================"
 

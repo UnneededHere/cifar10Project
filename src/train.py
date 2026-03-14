@@ -1,5 +1,5 @@
 """
-Training loop for CNN vs ViT CIFAR-10 experiments.
+Training loop for CNN vs ViT EuroSAT experiments.
 
 Usage
 -----
@@ -17,12 +17,12 @@ import torch.nn as nn
 from timm.data import Mixup
 from timm.loss import SoftTargetCrossEntropy
 
-from data import get_cifar10_loaders
+from data import get_eurosat_loaders
 from models import get_model
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train CNN/ViT on CIFAR-10")
+    parser = argparse.ArgumentParser(description="Train CNN/ViT on EuroSAT")
     parser.add_argument("--model", type=str, required=True,
                         choices=["resnet", "vit"],
                         help="Model architecture")
@@ -118,7 +118,7 @@ def main():
     print(f"{'='*60}\n")
 
     # ---- Data ----
-    train_loader, val_loader = get_cifar10_loaders(
+    train_loader, val_loader = get_eurosat_loaders(
         aug_type=args.aug,
         batch_size=args.batch_size,
         num_workers=args.num_workers,

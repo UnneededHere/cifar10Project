@@ -81,7 +81,7 @@ def plot_data_efficiency(logs, plot_dir):
 
     ax.set_xlabel("Training Data (%)")
     ax.set_ylabel("Best Validation Accuracy (%)")
-    ax.set_title("Data Efficiency: ResNet-18 vs Tiny ViT")
+    ax.set_title("Data Efficiency: ResNet-18 vs Tiny ViT (EuroSAT)")
     ax.legend()
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -199,7 +199,7 @@ def plot_final_accuracy_bars(logs, plot_dir):
     ax.set_xticks(x)
     ax.set_xticklabels([a.title() for a in aug_order])
     ax.set_ylabel("Best Validation Accuracy (%)")
-    ax.set_title("Final Accuracy: ResNet-18 vs Tiny ViT by Augmentation")
+    ax.set_title("Final EuroSAT Accuracy: ResNet-18 vs Tiny ViT by Augmentation")
     ax.legend()
     ax.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()
