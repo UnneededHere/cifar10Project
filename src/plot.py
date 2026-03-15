@@ -131,13 +131,13 @@ def plot_data_efficiency_gap(logs, plot_dir):
 # ---------- Phase 2 plots ----------
 
 def _phase2_logs(logs):
-    """Filter to Phase 2 runs: full dataset (frac100), all aug types."""
+    """Filter to Phase 2 runs: 10% dataset (frac0.10), all aug types."""
     phase2 = {}
     for name, df in logs.items():
         model, aug, frac = _parse_run_name(name)
         if model is None:
             continue
-        if abs(frac - 1.0) < 1e-6:
+        if abs(frac - 0.1) < 1e-6:
             phase2[(model, aug)] = df
     return phase2
 
@@ -166,7 +166,7 @@ def plot_val_accuracy_curves(logs, plot_dir):
                 ax.set_ylabel("Val Accuracy (%)")
             ax.grid(True, alpha=0.3)
 
-    fig.suptitle("Validation Accuracy Curves", fontsize=14, fontweight="bold")
+    fig.suptitle("Validation Accuracy Curves (10% Data)", fontsize=14, fontweight="bold")
     fig.tight_layout(rect=[0, 0, 1, 0.95])
     fig.savefig(os.path.join(plot_dir, "val_accuracy_curves.png"))
     plt.close(fig)
@@ -199,7 +199,7 @@ def plot_final_accuracy_bars(logs, plot_dir):
     ax.set_xticks(x)
     ax.set_xticklabels([a.title() for a in aug_order])
     ax.set_ylabel("Best Validation Accuracy (%)")
-    ax.set_title("Final EuroSAT Accuracy: ResNet-18 vs Tiny ViT by Augmentation")
+    ax.set_title("Final EuroSAT Accuracy: ResNet-18 vs Tiny ViT by Augmentation (10% Data)", fontsize=10)
     ax.legend()
     ax.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()
@@ -231,7 +231,7 @@ def plot_augmentation_gap(logs, plot_dir):
                 f"{val:.1f}pp", ha="center", va="bottom", fontweight="bold")
 
     ax.set_ylabel("Accuracy Gap (ResNet − ViT) in pp")
-    ax.set_title("Inductive Bias Gap vs Augmentation Level")
+    ax.set_title("Inductive Bias Gap vs Augmentation (10% Data)")
     ax.grid(True, axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(os.path.join(plot_dir, "augmentation_gap.png"))
@@ -255,7 +255,7 @@ def plot_train_loss_curves(logs, plot_dir):
 
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Training Loss")
-    ax.set_title("Training Loss Curves (solid=ResNet, dashed=ViT)")
+    ax.set_title("Training Loss Curves (10% Data)")
     ax.legend(fontsize=8, ncol=2)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
